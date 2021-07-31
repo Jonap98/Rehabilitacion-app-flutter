@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "253475565347",
+    "firebase_url": "https://rehabilitacion-fisica-default-rtdb.firebaseio.com",
+    "project_id": "rehabilitacion-fisica",
+    "storage_bucket": "rehabilitacion-fisica.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253475565347:android:692198ac915f4d18a22696",
+        "android_client_info": {
+          "package_name": "com.example.rehabilitacion_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "253475565347-nqm6fj24q253t8bjlc2sabkh55pvekru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOEm2ajlO9VFfPW5QMeJzJdCaQv4z7g04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "253475565347-nqm6fj24q253t8bjlc2sabkh55pvekru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
