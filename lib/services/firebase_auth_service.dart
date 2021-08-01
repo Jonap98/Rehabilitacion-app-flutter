@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -40,6 +41,13 @@ class FirebaseAuthService extends ChangeNotifier {
     // Decodificamos la respuesta
     final Map<String, dynamic> decodedResp = json.decode(resp.body);
 
+    // Creando el usuario en firestore
+    print('Local ID: ${decodedResp['localId']}');
+
+    // print(decodedResp['uid'].uid);
+    // final id = authResult.user!.uid;
+    addUser(decodedResp['localId'], email);
+
     this.autenticando = false;
 
     // Analizamos la respuesta para ver el id Token o procesar el error
@@ -50,6 +58,18 @@ class FirebaseAuthService extends ChangeNotifier {
     } else {
       return decodedResp['error']['message'];
     }
+  }
+
+  Future<void> addUser(String id, String email) async {
+    CollectionReference user = FirebaseFirestore.instance.collection('users');
+
+    return user
+        .doc(id)
+        .set({
+          'email': email,
+        })
+        .then((value) => print('Usuario creado'))
+        .catchError((error) => print('Error $error'));
   }
 
   Future<String?> login(String email, String password) async {

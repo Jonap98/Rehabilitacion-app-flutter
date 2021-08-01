@@ -38,6 +38,8 @@ dependencies:
   video_player: ^2.1.10
   chewie: ^1.2.2
   firebase_auth: ^3.0.1
+  firebase_core: ^1.4.0
+  cloud_firestore: ^2.4.0 
 
 dev_dependencies:
   flutter_test:
