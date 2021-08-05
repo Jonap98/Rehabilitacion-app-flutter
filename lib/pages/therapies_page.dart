@@ -50,6 +50,19 @@ class TherapiesPage extends StatelessWidget {
           ),
         ),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     int i = 1;
+      //     therapyService.therapies.forEach((element) {
+      //       print(i);
+      //       print(element.id);
+      //       print(element.nombre);
+      //       print(element.imagen);
+      //       i++;
+      //     });
+      //     print(therapyService.therapies.length);
+      //   },
+      // ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {

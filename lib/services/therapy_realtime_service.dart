@@ -10,8 +10,6 @@ import 'package:rehabilitacion_app/models/therapy.dart';
 
 class TherapyFirebaseService extends ChangeNotifier {
   final String _baseUrl = 'rehabilitacion-fisica-default-rtdb.firebaseio.com';
-  // final String _baseUrl = 'firestore.googleapis.com/v1/projects/rehabilitacion-fisica/databases/(default)/documents/users';
-  // final String _firebaseToken = 'AIzaSyCJKd2wJVyXZrSMvdS91nNZtlKUVI5DZVI';
 
   final List<Therapy> therapies = [];
   late Therapy? selectedTherapy;
@@ -25,102 +23,40 @@ class TherapyFirebaseService extends ChangeNotifier {
 
   TherapyFirebaseService() {
     this.loadTherapies();
-    // this.getTherapies();
   }
 
   Future loadTherapies() async {
     this.isLoading = true;
     notifyListeners();
 
-    CollectionReference collectionTherapy =
-        FirebaseFirestore.instance.collection('therapies');
+    // TODO: Implementación de retorno a login con sesión expirada y error con
+    // login correcto la primera vez
+    // String? token = '';
+    // token = await storage.read(key: 'token');
+    // print('Token: $token');
 
-    collectionTherapy.get().then((QuerySnapshot querySnapshot) {
-      print(querySnapshot.metadata);
-      querySnapshot.docs.forEach((doc) {
-        // print('Doc: $doc');
-        // print('Doc Name: ${doc['name']}');
-        // print('Doc Image: ${doc['image']}');
-        final Therapy tmp = Therapy(
-          imagen: doc['image'],
-          nombre: doc['name'],
-        );
-        this.therapies.add(tmp);
-        final datos = jsonEncode(doc.data());
-        // Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        // String resp = data.toString();
-        // final _dat = jsonDecode(resp);
-        // doc.data() as Map<String, dynamic>;
-        // Map<String, dynamic> data = jsonDecode(doc);
-        // http.Response dat = jsonEncode(data);
+    // if (token == null) {
+    //   print('Token vacio, sesion expirada');
 
-        // String jsonDataResp = dat.body.toString();
-        // final _data = jsonDecode(jsonDataResp);
-        final qwerty = jsonDecode(datos);
+    //   this.isLoading = false;
+    //   // this.sessionExpired = true;
+    //   notifyListeners();
 
-        // qwerty.forEach((key, value) {
-        //   print('Index: $index');
-        //   print('Nombre: ${qwerty['name']}');
-        //   print(qwerty['image']);
-        //   // final temp = Therapy.fromJson(value);
-        //   // final Therapy tmp = Therapy(nombre: '');
-        //   final Therapy tmp = Therapy(
-        //     id: key,
-        //     imagen: qwerty['image'],
-        //     nombre: qwerty['name'],
-        //   );
-        //   // tmp.id = key;
-        //   // tmp.nombre = qwerty['nombre'];
-        //   // tmp.imagen = qwerty['image'];
-        //   // temp.id = key;
-        //   // temp.nombre = data['name'];
-        //   // temp.imagen = data['image'];
-        //   index++;
-        //   // this.therapies.add(tmp);
-        // });
+    //   return;
+    // }
 
-        // print(data);
+    final url = Uri.https(_baseUrl, 'terapias.json',
+        {'auth': await storage.read(key: 'token') ?? ''});
 
-        // querySnapshot.docs.map((DocumentSnapshot document) {
-        //   Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        //   // final temp = Therapy.fromMap(data as Map<String, dynamic>);
-        //   // temp.nombre = data['name'];
-        //   // temp.imagen = data['image'];
-        //   print(data['name']);
-        //   print(data['image']);
-        //   // this.therapies.add(temp);
-        // });
+    final resp = await http.get(url);
 
-        // final temp = Therapy.fromMap(doc as Map<String, dynamic>);
-        // temp.id = '123456';
-        // temp.nombre = doc['name'];
-        // temp.imagen = doc['image'];
-        // temp.nombre = doc['name'];
-        // print('Doc: ');
-        // print(doc['name']);
-        // print(doc['image']);
-        // print('Data: ');
-        // print(data['name']);
-        // print(data['image']);
-        // temp.id = data['id'];
-        // temp.imagen = data['image'];
-        // temp.nombre = data['name'];
-        // this.therapies.add(temp);
-      });
+    final Map<String, dynamic> therapiesMap = json.decode(resp.body);
+
+    therapiesMap.forEach((key, value) {
+      final tempTherapy = Therapy.fromMap(value);
+      tempTherapy.id = key;
+      this.therapies.add(tempTherapy);
     });
-    // }).catchError((error) => print(error));
-
-    // final DocumentSnapshot snapshot = collectionTherapy as DocumentSnapshot;
-    // Map<String, dynamic> mapTherapy = snapshot.data() as Map<String, dynamic>;
-
-    // final Map<String, dynamic> map = collectionTherapy as Map<String, dynamic>;
-
-    // map.forEach((key, value) {
-    //   final tempTherapy = Therapy.fromMap(value);
-    //   tempTherapy.id = key;
-    // });
-
-    // print('Carga de terapias: ${mapTherapy['name']}');
 
     this.isLoading = false;
     notifyListeners();
@@ -152,12 +88,6 @@ class TherapyFirebaseService extends ChangeNotifier {
     // print(decodedData); en este print se observa 'name' como el id de firebase
     therapy.id = decodedData['name'];
     this.therapies.add(therapy);
-
-    // addTherapy(therapy.nombre, therapy.imagen);
-    // print(decodedData);
-    // print(therapy.id);
-    // print(therapy.nombre);
-    // print(therapy.imagen);
 
     return '';
   }
