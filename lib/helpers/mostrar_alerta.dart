@@ -12,12 +12,18 @@ mostrarAlerta(BuildContext context, String titulo, String subtitulo) {
         content: Text(subtitulo),
         actions: [
           MaterialButton(
-            child: Text('Ok'),
+            child: Text(
+              'Ok',
+              style: TextStyle(color: Colors.white),
+            ),
             elevation: 5.0,
-            color: Colors.blue,
+            color: Color(0xff5ec1c8),
             onPressed: () => Navigator.pop(context),
           ),
         ],
+        shape: new RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
       ),
     );
   } else {

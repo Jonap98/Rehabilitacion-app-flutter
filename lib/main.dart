@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rehabilitacion_app/routes/routes.dart';
+import 'package:rehabilitacion_app/services/auth_form_validator.dart';
 import 'package:rehabilitacion_app/services/exercise_firebase_service.dart';
 import 'package:rehabilitacion_app/services/firebase_auth_service.dart';
 import 'package:rehabilitacion_app/services/services.dart';
 import 'package:rehabilitacion_app/services/therapy_firebase_service.dart';
+import 'package:rehabilitacion_app/services/therapy_realtime_service.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,10 +26,16 @@ class MyApp extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(
+                create: (_) => FormValidator(),
+              ),
+              ChangeNotifierProvider(
                 create: (_) => FirebaseAuthService(),
               ),
               ChangeNotifierProvider(
                 create: (_) => TherapyFirebaseService(),
+              ),
+              ChangeNotifierProvider(
+                create: (_) => TherapyRealTimeService(),
               ),
               ChangeNotifierProvider(
                 create: (_) => ExerciseFirebaseService(),

@@ -30,7 +30,7 @@ class Labels extends StatelessWidget {
             child: Text(
               this.boton,
               style: TextStyle(
-                color: Colors.blue[600],
+                color: Color(0xff5ec1c8),
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

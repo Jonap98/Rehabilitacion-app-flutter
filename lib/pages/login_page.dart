@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rehabilitacion_app/helpers/mostrar_alerta.dart';
+import 'package:rehabilitacion_app/services/auth_form_validator.dart';
 
 import 'package:rehabilitacion_app/services/firebase_auth_service.dart';
 import 'package:rehabilitacion_app/services/services.dart';
 import 'package:rehabilitacion_app/services/therapy_firebase_service.dart';
+import 'package:rehabilitacion_app/services/therapy_form_provider.dart';
 import 'package:rehabilitacion_app/widgets/boton_azul.dart';
 import 'package:rehabilitacion_app/widgets/custom_input.dart';
 import 'package:rehabilitacion_app/widgets/labels.dart';
@@ -21,7 +24,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SizedBox(height: 150.0),
+                SizedBox(height: 20.0),
                 _Form(),
                 Labels(
                     pregunta: '¿Aún no tienes cuenta?',
@@ -51,58 +54,118 @@ class __FormState extends State<_Form> {
     // final authService = Provider.of<AuthService>(context);
     final firebaseAuthService = Provider.of<FirebaseAuthService>(context);
     final therapyService = Provider.of<TherapyFirebaseService>(context);
+    final formService = Provider.of<FormValidator>(context);
 
     // final usuarioCtrl = TextEditingController();
     final emailCtrl = TextEditingController();
     final passCtrl = TextEditingController();
+    final regexp = RegExp(
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
 
     return Container(
-      margin: EdgeInsets.only(top: 40.0),
+      // margin: EdgeInsets.only(top: 10.0),
       padding: EdgeInsets.symmetric(horizontal: 50.0),
-      child: Column(
-        children: <Widget>[
-          CustomInput(
-            icon: Icons.mail_outline,
-            placeholder: 'Email',
-            keyboardType: TextInputType.emailAddress,
-            textController: emailCtrl,
-          ),
-          CustomInput(
-            icon: Icons.lock_open,
-            placeholder: 'Password',
-            textController: passCtrl,
-          ),
-          BotonAzul(
-            text: 'Ingresar',
-            onPressed: firebaseAuthService.autenticando
-                ? null
-                : () async {
-                    FocusScope.of(context).unfocus();
+      child: Form(
+        key: formService.loginKey,
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 200.0,
+              width: 200.0,
+              margin: EdgeInsets.only(bottom: 20.0),
+              child: Image(
+                image: AssetImage('assets/RLogoColor.png'),
+              ),
+            ),
+            // CustomInput(
+            //   icon: Icons.mail_outline,
+            //   placeholder: 'Email',
+            //   keyboardType: TextInputType.emailAddress,
+            //   textController: emailCtrl,
+            // ),
+            // CustomInput(
+            //   icon: Icons.lock_open,
+            //   placeholder: 'Password',
+            //   textController: passCtrl,
+            // ),
+            TextFormField(
+              controller: emailCtrl,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'Email',
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'El email es obligatorio';
+                } else if (!regexp.hasMatch(value)) {
+                  return 'Correo electrónico inválido';
+                }
+              },
+            ),
+            SizedBox(height: 20.0),
+            TextFormField(
+              controller: passCtrl,
+              decoration: InputDecoration(
+                hintText: 'Password',
+              ),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'La contraseña es obligatoria';
+                } else if (value.length < 6) {
+                  return 'La contraseña debe tener al menos 6 caracteres';
+                }
+              },
+            ),
+            SizedBox(height: 30.0),
+            BotonAzul(
+              text: 'Ingresar',
+              onPressed: firebaseAuthService.autenticando
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
 
-                    final String? errorMessage = await firebaseAuthService
-                        .login(emailCtrl.text.trim(), passCtrl.text.trim());
+                      if (!formService.isValidLogin()) return;
 
-                    if (errorMessage == null) {
-                      // therapyService.sessionExpired = false;
-                      // therapyService.isLoading = true;
-                      Navigator.pushReplacementNamed(context, 'therapies_page');
-                    } else {
-                      print(errorMessage);
-                      NotificationsService.showSnackbar(errorMessage);
-                    }
+                      // final String? errorMessage = await firebaseAuthService
+                      //     .login(emailCtrl.text.trim(), passCtrl.text.trim());
 
-                    // if (loginOk) {
-                    //   Navigator.pushReplacementNamed(context, 'home_page');
-                    // } else {
-                    //   mostrarAlerta(
-                    //     context,
-                    //     'Login incorrecto',
-                    //     'Revisar sus credenciales nuevamente',
-                    //   );
-                    // }
-                  },
-          ),
-        ],
+                      // if (errorMessage == null) {
+                      //   // therapyService.sessionExpired = false;
+                      //   // therapyService.isLoading = true;
+                      //   Navigator.pushReplacementNamed(context, 'therapies_page');
+                      // } else {
+                      final loginOk = await firebaseAuthService.login(
+                        emailCtrl.text.trim(),
+                        passCtrl.text.trim(),
+                      );
+                      if (loginOk) {
+                        Navigator.pushReplacementNamed(
+                            context, 'therapies_page');
+                        // addThisUser(
+                        //     emailCtrl.text.trim(), passCtrl.text.trim());
+                      } else {
+                        // print(errorMessage);
+                        // NotificationsService.showSnackbar('errorMessage');
+                        mostrarAlerta(
+                          context,
+                          'Login incorrecto',
+                          'Revisar sus credenciales nuevamente.',
+                        );
+                      }
+
+                      // if (loginOk) {
+                      //   Navigator.pushReplacementNamed(context, 'home_page');
+                      // } else {
+                      //   mostrarAlerta(
+                      //     context,
+                      //     'Login incorrecto',
+                      //     'Revisar sus credenciales nuevamente',
+                      //   );
+                      // }
+                    },
+            ),
+          ],
+        ),
       ),
     );
   }

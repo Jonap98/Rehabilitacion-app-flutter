@@ -20,7 +20,7 @@ class FirebaseAuthService extends ChangeNotifier {
   }
 
   // Si retornamos algo, hay un error, si no, todo bien
-  Future<String?> createUser(String email, String password) async {
+  Future<bool> createUser(String email, String password) async {
     this.autenticando = true;
 
     // Crear información del post
@@ -42,21 +42,25 @@ class FirebaseAuthService extends ChangeNotifier {
     final Map<String, dynamic> decodedResp = json.decode(resp.body);
 
     // Creando el usuario en firestore
-    print('Local ID: ${decodedResp['localId']}');
 
     // print(decodedResp['uid'].uid);
     // final id = authResult.user!.uid;
-    addUser(decodedResp['localId'], email);
+    // addUser(decodedResp['localId'], email);
 
     this.autenticando = false;
+    notifyListeners();
 
     // Analizamos la respuesta para ver el id Token o procesar el error
     // print(decodedResp);
     if (decodedResp.containsKey('idToken')) {
       storage.write(key: 'token', value: decodedResp['idToken']);
-      return null;
+      print('Local ID: ${decodedResp['localId']}');
+      addUser(decodedResp['localId'], email);
+
+      return true;
     } else {
-      return decodedResp['error']['message'];
+      // return decodedResp['error']['message'];
+      return false;
     }
   }
 
@@ -72,7 +76,7 @@ class FirebaseAuthService extends ChangeNotifier {
         .catchError((error) => print('Error $error'));
   }
 
-  Future<String?> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     this.autenticando = true;
 
     // Crear información del post
@@ -100,9 +104,13 @@ class FirebaseAuthService extends ChangeNotifier {
     // print('Analisis de la respuesta del login: $decodedResp');
     if (decodedResp.containsKey('idToken')) {
       storage.write(key: 'token', value: decodedResp['idToken']);
-      return null;
+      print('Registro correcto, Token: ${decodedResp['idToken']}');
+
+      // return null;
+      return true;
     } else {
-      return decodedResp['error']['message'];
+      // return decodedResp['error']['message'];}
+      return false;
     }
   }
 

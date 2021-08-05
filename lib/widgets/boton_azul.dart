@@ -24,8 +24,9 @@ class BotonAzul extends StatelessWidget {
         ),
       ),
       style: ElevatedButton.styleFrom(
+        primary: Color(0xff1bc4bc),
         elevation: 2,
-        shape: StadiumBorder(),
+        // shape: StadiumBorder(),
       ),
       onPressed: onPressed,
     );

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:rehabilitacion_app/models/therapy.dart';
 
-class TherapyFirebaseService extends ChangeNotifier {
+class TherapyRealTimeService extends ChangeNotifier {
   final String _baseUrl = 'rehabilitacion-fisica-default-rtdb.firebaseio.com';
 
   final List<Therapy> therapies = [];
@@ -21,7 +21,7 @@ class TherapyFirebaseService extends ChangeNotifier {
   bool isLoading = true;
   bool isSaving = false;
 
-  TherapyFirebaseService() {
+  TherapyRealTimeService() {
     this.loadTherapies();
   }
 
